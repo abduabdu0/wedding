@@ -1,0 +1,1544 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <!-- Основная информация страницы -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Приглашение на свадьбу">
+
+    <title>Приглашение на свадьбу</title>
+
+    <!-- Метаданные для соцсетей -->
+    <meta property="og:title" content="Приглашение на свадьбу">
+    <meta property="og:description" content="Приходите разделить с нами самый важный день">
+    <meta property="og:type" content="website">
+
+    <!-- Шрифты: Cormorant Garamond — заголовки и цифры, Jost — текст, Parisienne — имена молодожёнов -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Jost:wght@300;400;500;600&family=Parisienne&display=swap" rel="stylesheet">
+
+    <!-- СТИЛИ (CSS) - все в одном месте -->
+    <style>
+        /* ============================================================
+           ЦВЕТОВЫЕ ПЕРЕМЕННЫЕ И БАЗОВЫЕ СТИЛИ
+           ============================================================ */
+
+        :root {
+            /* Основные цвета */
+            --цвет-фон: #f7f4ec;            /* Светло-бежевый фон */
+            --цвет-бумага: #fffdf9;         /* Более светлый оттенок для карточек */
+            --цвет-текст: #2b2823;          /* Тёмно-коричневый текст */
+            --цвет-текст-мягкий: #83786a;   /* Приглушённый текст */
+            --цвет-акцент: #a9814b;         /* Золотистый акцент */
+            --цвет-акцент-светлый: #cdab7c; /* Светлое золото для линий */
+            --цвет-второй: #5c6b4f;         /* Оливковый */
+            --цвет-глубокий: #221e18;       /* Почти чёрный для обложки */
+            --цвет-вино: #5a0f1b;           /* Тёплый бордовый для кнопки музыки */
+
+            /* Шрифты */
+            --шрифт-заголовок: 'Cormorant Garamond', Georgia, serif;
+            --шрифт-имена: 'Parisienne', cursive;
+            --шрифт-текст: 'Jost', 'Segoe UI', sans-serif;
+
+            /* Расстояния */
+            --отступ-1: 8px;
+            --отступ-2: 16px;
+            --отступ-3: 32px;
+            --отступ-4: 64px;
+            --отступ-5: 96px;
+
+            /* Переходы */
+            --переход: all 0.35s cubic-bezier(.22,.61,.36,1);
+            --лёгкость: cubic-bezier(.22,.61,.36,1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html, body {
+            width: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--цвет-фон);
+            /* Тончайшая текстура бумаги — придаёт фону глубину, не отвлекая от контента */
+            background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/></svg>");
+            color: var(--цвет-текст);
+            font-family: var(--шрифт-текст);
+            font-weight: 300;
+            font-size: 16px;
+            line-height: 1.7;
+            overflow-x: hidden;
+        }
+
+        body.заблокировано {
+            overflow-y: hidden;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        img, video {
+            max-width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        ::selection {
+            background: var(--цвет-акцент-светлый);
+            color: var(--цвет-глубокий);
+        }
+
+        /* Тонкий золотой разделитель — используется как единичный акцентный приём, а не украшение "на каждый случай" */
+        .разделитель {
+            width: 0;
+            height: 1px;
+            background: var(--цвет-акцент);
+            margin: var(--отступ-2) auto;
+            transition: width 1s var(--лёгкость);
+        }
+
+        .в-поле .разделитель {
+            width: 64px;
+        }
+
+        /* ============================================================
+           ОБЛОЖКА ПРИГЛАШЕНИЯ (первый экран при загрузке)
+           ============================================================ */
+
+        .обложка {
+            position: relative;
+            width: 100%;
+            min-height: 100svh;
+            margin: 0 auto;
+            background: var(--цвет-глубокий);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 1.4s var(--лёгкость), transform 1s var(--лёгкость);
+        }
+
+        .обложка__фон {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: 0;
+            transform: scale(1.06);
+            animation: медленныйНаезд 20s ease-in-out infinite alternate;
+        }
+
+        @keyframes медленныйНаезд {
+            from { transform: scale(1.06); }
+            to { transform: scale(1.14); }
+        }
+
+        .обложка::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(180deg, rgba(15,13,10,.55) 0%, rgba(15,13,10,.25) 40%, rgba(15,13,10,.6) 100%);
+            z-index: 0;
+        }
+
+        .обложка__содержимое {
+            position: relative;
+            z-index: 1;
+            color: #fbf8f2;
+            text-align: center;
+            padding: var(--отступ-3);
+        }
+
+        .обложка.открыта {
+            opacity: 0;
+            pointer-events: none;
+            transform: scale(0.97);
+        }
+
+        .обложка__эпиграф {
+            font-family: var(--шрифт-текст);
+            font-weight: 300;
+            font-size: clamp(11px, 2vw, 13px);
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            color: var(--цвет-акцент-светлый);
+            opacity: 0;
+            animation: тихоеПоявление 1s var(--лёгкость) 0.2s forwards;
+        }
+
+        .обложка__имена {
+            font-family: var(--шрифт-имена);
+            font-weight: 400;
+            font-size: clamp(48px, 13vw, 108px);
+            line-height: 1.1;
+            color: #fff;
+            margin: var(--отступ-2) 0;
+            opacity: 0;
+            animation: тихоеПоявление 1.1s var(--лёгкость) 0.5s forwards;
+        }
+
+        .обложка__имена .амперсанд {
+            display: inline-block;
+            font-size: 0.6em;
+            color: var(--цвет-акцент-светлый);
+            margin: 0 0.08em;
+        }
+
+        .обложка__дата {
+            font-family: var(--шрифт-заголовок);
+            font-style: italic;
+            font-size: clamp(16px, 3.5vw, 22px);
+            color: #fbf8f2;
+            letter-spacing: 1px;
+            opacity: 0;
+            animation: тихоеПоявление 1s var(--лёгкость) 0.8s forwards;
+        }
+
+        .обложка__дата .разделитель {
+            background: var(--цвет-акцент-светлый);
+            width: 44px;
+            margin: var(--отступ-1) auto var(--отступ-2);
+        }
+
+        @keyframes тихоеПоявление {
+            from { opacity: 0; transform: translateY(14px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .обложка__подсказка {
+            position: absolute;
+            bottom: var(--отступ-4);
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+            opacity: 0;
+            animation: тихоеПоявление 1s var(--лёгкость) 1.3s forwards;
+        }
+
+        .обложка__подсказка span {
+            font-size: 11px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: rgba(251, 248, 242, 0.75);
+        }
+
+        .обложка__подсказка svg {
+            width: 14px;
+            height: 20px;
+            stroke: var(--цвет-акцент-светлый);
+            animation: тихоеСкольжение 2.2s ease-in-out infinite;
+        }
+
+        @keyframes тихоеСкольжение {
+            0%, 100% { transform: translateY(0); opacity: 0.5; }
+            50% { transform: translateY(6px); opacity: 1; }
+        }
+
+        /* ============================================================
+           ОСНОВНОЙ КОНТЕНТ
+           ============================================================ */
+
+        .основной-контент {
+            position: relative;
+            z-index: 1;
+            opacity: 0;
+            transition: opacity 1s ease-in 0.4s;
+        }
+
+        .основной-контент.видимый {
+            opacity: 1;
+        }
+
+        /* Секции - части приглашения. Каждая — полноширинная полоса с мягкой
+           подсветкой позади контента; сам контент остаётся в узкой колонке. */
+        .секция {
+            position: relative;
+            width: 100%;
+            overflow: hidden;
+            opacity: 0;
+            transform: translateY(22px);
+            transition: opacity 0.9s var(--лёгкость), transform 0.9s var(--лёгкость);
+        }
+
+        .секция.в-поле {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .секция__внутри {
+            position: relative;
+            z-index: 1;
+            max-width: 640px;
+            margin: 0 auto;
+            padding: var(--отступ-5) var(--отступ-3);
+        }
+
+        /* Мягкое цветовое пятно позади контента — чередуется золото / олива,
+           создавая лёгкую акварельную атмосферу без готовых картинок */
+        .секция::before {
+            content: '';
+            position: absolute;
+            width: 640px;
+            height: 640px;
+            max-width: 140vw;
+            border-radius: 50%;
+            filter: blur(90px);
+            opacity: 0.16;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .секция:nth-of-type(odd)::before {
+            background: var(--цвет-акцент-светлый);
+            top: -220px;
+            right: -220px;
+        }
+
+        .секция:nth-of-type(even)::before {
+            background: var(--цвет-второй);
+            bottom: -220px;
+            left: -220px;
+            opacity: 0.12;
+        }
+
+        /* Волнистая линия вместо прямой границы между секциями */
+        .секция:not(:last-child)::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            height: 14px;
+            z-index: 1;
+            background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 14' preserveAspectRatio='none'><path d='M0 7 C 15 0, 25 14, 40 7 S 65 0, 80 7 S 105 14, 120 7' fill='none' stroke='%23a9814b' stroke-width='1' opacity='0.35'/></svg>");
+            background-repeat: repeat-x;
+            background-size: 120px 14px;
+        }
+
+        /* Единая веточка-орнамент над заголовком секции — один и тот же приём
+           на протяжении всей страницы, а не набор случайных декораций */
+        .секция__орнамент {
+            display: block;
+            width: 34px;
+            height: 20px;
+            margin: 0 auto var(--отступ-1);
+            color: var(--цвет-акцент);
+            opacity: 0.85;
+        }
+
+        .секция__эпиграф {
+            display: block;
+            font-size: 12px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--цвет-акцент);
+            text-align: center;
+            margin-bottom: var(--отступ-1);
+        }
+
+        .секция__заголовок {
+            font-family: var(--шрифт-заголовок);
+            font-weight: 600;
+            font-size: clamp(28px, 6vw, 40px);
+            color: var(--цвет-второй);
+            margin-bottom: var(--отступ-1);
+            text-align: center;
+            letter-spacing: 0.3px;
+        }
+
+        .секция__текст {
+            font-size: 17px;
+            font-weight: 300;
+            line-height: 1.85;
+            color: var(--цвет-текст);
+            text-align: center;
+            max-width: 52ch;
+            margin: 0 auto var(--отступ-2);
+        }
+
+        /* ============================================================
+           ПРОГРАММА ДНЯ — временная шкала (это действительно последовательность)
+           ============================================================ */
+
+        .расписание {
+            position: relative;
+            margin-top: var(--отступ-4);
+            padding-left: 28px;
+        }
+
+        .расписание::before {
+            content: '';
+            position: absolute;
+            left: 4px;
+            top: 6px;
+            bottom: 6px;
+            width: 1px;
+            background: linear-gradient(var(--цвет-акцент-светлый), var(--цвет-акцент-светлый)) no-repeat;
+            background-size: 100% 0%;
+            transition: background-size 1.4s var(--лёгкость) 0.2s;
+        }
+
+        .в-поле .расписание::before {
+            background-size: 100% 100%;
+        }
+
+        .расписание__пункт {
+            position: relative;
+            padding: 0 0 var(--отступ-3) var(--отступ-3);
+        }
+
+        .расписание__пункт:last-child {
+            padding-bottom: 0;
+        }
+
+        .расписание__пункт::before {
+            content: '';
+            position: absolute;
+            left: -28px;
+            top: 6px;
+            width: 9px;
+            height: 9px;
+            border-radius: 50%;
+            background: var(--цвет-фон);
+            border: 1px solid var(--цвет-акцент);
+            transition: var(--переход);
+        }
+
+        .расписание__пункт:hover::before {
+            background: var(--цвет-акцент);
+        }
+
+        .расписание__время {
+            font-family: var(--шрифт-заголовок);
+            font-weight: 600;
+            font-style: italic;
+            color: var(--цвет-акцент);
+            font-size: 20px;
+        }
+
+        .расписание__название {
+            color: var(--цвет-текст);
+            font-size: 15px;
+            margin-top: 2px;
+        }
+
+        /* ============================================================
+           МЕСТО И КАРТА
+           ============================================================ */
+
+        .адрес {
+            text-align: center;
+            padding: var(--отступ-3) 0;
+            margin: var(--отступ-2) 0 var(--отступ-3);
+            border-top: 1px solid rgba(169, 129, 75, 0.2);
+            border-bottom: 1px solid rgba(169, 129, 75, 0.2);
+        }
+
+        .адрес__название {
+            font-family: var(--шрифт-заголовок);
+            font-weight: 600;
+            font-size: 22px;
+            color: var(--цвет-второй);
+            margin-bottom: 4px;
+        }
+
+        .адрес__текст {
+            color: var(--цвет-текст-мягкий);
+            font-size: 14px;
+            letter-spacing: 0.4px;
+        }
+
+        .карта {
+            width: 100%;
+            height: 380px;
+            border-radius: 2px;
+            overflow: hidden;
+            margin: var(--отступ-3) 0;
+            border: 1px solid rgba(169, 129, 75, 0.25);
+        }
+
+        /* ============================================================
+           ИНФОРМАЦИОННЫЕ КАРТОЧКИ
+           ============================================================ */
+
+        .карточки {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: var(--отступ-2);
+            margin-top: var(--отступ-3);
+        }
+
+        .карточка {
+            background-color: var(--цвет-бумага);
+            border: 1px solid rgba(169, 129, 75, 0.2);
+            padding: var(--отступ-3);
+            text-align: center;
+            transition: var(--переход);
+        }
+
+        .карточка:hover {
+            border-color: var(--цвет-акцент);
+            transform: translateY(-3px);
+        }
+
+        .карточка__заголовок {
+            font-family: var(--шрифт-заголовок);
+            font-weight: 600;
+            font-size: 20px;
+            color: var(--цвет-второй);
+            margin-bottom: var(--отступ-1);
+        }
+
+        .карточка__текст {
+            color: var(--цвет-текст-мягкий);
+            font-size: 14px;
+            line-height: 1.7;
+        }
+
+        /* ============================================================
+           ОБРАТНЫЙ ОТСЧЁТ
+           ============================================================ */
+
+        .отсчёт {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: var(--отступ-2);
+            margin: var(--отступ-4) 0 var(--отступ-2);
+            text-align: center;
+        }
+
+        .отсчёт__элемент {
+            padding: var(--отступ-2) var(--отступ-1);
+            border-left: 1px solid rgba(169, 129, 75, 0.25);
+        }
+
+        .отсчёт__элемент:first-child {
+            border-left: none;
+        }
+
+        .отсчёт__число {
+            font-family: var(--шрифт-заголовок);
+            font-size: clamp(30px, 6vw, 52px);
+            font-weight: 600;
+            color: var(--цвет-акцент);
+            font-variant-numeric: tabular-nums;
+            transition: opacity 0.25s ease, transform 0.25s ease;
+        }
+
+        .отсчёт__число.тик {
+            opacity: 0.4;
+            transform: translateY(-4px);
+        }
+
+        .отсчёт__название {
+            font-size: 11px;
+            color: var(--цвет-текст-мягкий);
+            margin-top: var(--отступ-1);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        /* ============================================================
+           ГАЛЕРЕЯ (ФОТО И ВИДЕО)
+           ============================================================ */
+
+        .галерея {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: var(--отступ-1);
+            margin-top: var(--отступ-3);
+        }
+
+        .галерея__элемент {
+            position: relative;
+            overflow: hidden;
+            aspect-ratio: 4 / 5;
+            background-color: rgba(169, 129, 75, 0.08);
+        }
+
+        .галерея__элемент img,
+        .галерея__элемент video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.6s var(--лёгкость);
+        }
+
+        .галерея__элемент:hover img,
+        .галерея__элемент:hover video {
+            transform: scale(1.06);
+        }
+
+        .галерея__подсказка {
+            grid-column: 1 / -1;
+            text-align: center;
+            color: var(--цвет-текст-мягкий);
+            padding: var(--отступ-4) var(--отступ-2);
+            font-size: 14px;
+            border: 1px dashed rgba(169, 129, 75, 0.3);
+        }
+
+        /* ============================================================
+           ФОРМА ОТВЕТА (RSVP) — оформлена как отдельная карточка-приглашение
+           ============================================================ */
+
+        .форма-обёртка {
+            position: relative;
+            max-width: 480px;
+            margin: var(--отступ-3) auto 0;
+        }
+
+        .форма {
+            position: relative;
+            background-color: var(--цвет-бумага);
+            border: 1px solid rgba(169, 129, 75, 0.3);
+            box-shadow: 0 30px 60px -30px rgba(43, 40, 35, 0.25);
+            padding: var(--отступ-4) var(--отступ-3) var(--отступ-3);
+        }
+
+        /* Тот же орнамент, что и над заголовками секций — теперь в углах карточки */
+        .форма::before,
+        .форма::after {
+            content: '';
+            position: absolute;
+            width: 46px;
+            height: 46px;
+            background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40' fill='none' stroke='%23a9814b' stroke-width='1'><path d='M2 2 C 10 2, 2 10, 2 2 Z M2 2 C 2 16, 16 20, 24 20 M2 2 C 16 2, 20 16, 20 24' opacity='0.55'/></svg>");
+            background-repeat: no-repeat;
+            opacity: 0.9;
+            pointer-events: none;
+        }
+
+        .форма::before {
+            top: -1px;
+            left: -1px;
+        }
+
+        .форма::after {
+            top: -1px;
+            right: -1px;
+            transform: scaleX(-1);
+        }
+
+        .форма__группа {
+            margin-bottom: var(--отступ-3);
+            position: relative;
+        }
+
+        .форма__метка {
+            display: block;
+            font-size: 12px;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            color: var(--цвет-текст-мягкий);
+            margin-bottom: var(--отступ-1);
+        }
+
+        /* Текстовые поля с плавающей подписью: подпись живёт внутри поля,
+           пока оно пустое, и мягко всплывает наверх при фокусе/вводе */
+        .форма__группа--плавающая {
+            padding-top: 6px;
+        }
+
+        .форма__поле {
+            width: 100%;
+            padding: 10px 2px 8px;
+            border: none;
+            border-bottom: 1px solid rgba(169, 129, 75, 0.35);
+            border-radius: 0;
+            font-family: var(--шрифт-текст);
+            font-size: 16px;
+            font-weight: 300;
+            color: var(--цвет-текст);
+            background-color: transparent;
+            transition: border-color 0.3s ease;
+        }
+
+        .форма__поле:focus {
+            outline: none;
+            border-bottom-color: var(--цвет-акцент);
+        }
+
+        .форма__метка-плавающая {
+            position: absolute;
+            left: 2px;
+            top: 16px;
+            font-size: 16px;
+            font-weight: 300;
+            color: var(--цвет-текст-мягкий);
+            pointer-events: none;
+            transform-origin: left top;
+            transition: transform 0.25s var(--лёгкость), color 0.25s ease, top 0.25s ease;
+        }
+
+        .форма__поле:focus ~ .форма__метка-плавающая,
+        .форма__поле:not(:placeholder-shown) ~ .форма__метка-плавающая {
+            top: -8px;
+            transform: scale(0.78);
+            color: var(--цвет-акцент);
+        }
+
+        textarea.форма__поле {
+            resize: vertical;
+            min-height: 64px;
+        }
+
+        /* Сегментированный выбор вместо стандартных <select> — компактные "таблетки" */
+        .пилюли {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .пилюли input {
+            position: absolute;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .пилюли label {
+            flex: 1;
+            min-width: max-content;
+            text-align: center;
+            padding: 10px 16px;
+            font-size: 13.5px;
+            color: var(--цвет-текст);
+            border: 1px solid rgba(169, 129, 75, 0.35);
+            cursor: pointer;
+            transition: var(--переход);
+            user-select: none;
+        }
+
+        .пилюли label:hover {
+            border-color: var(--цвет-акцент);
+        }
+
+        .пилюли input:checked + label {
+            background-color: var(--цвет-второй);
+            border-color: var(--цвет-второй);
+            color: #fff;
+        }
+
+        .пилюли input:focus-visible + label {
+            outline: 2px solid var(--цвет-акцент);
+            outline-offset: 2px;
+        }
+
+        .форма__кнопка {
+            width: 100%;
+            position: relative;
+            overflow: hidden;
+            padding: var(--отступ-2);
+            background-color: var(--цвет-второй);
+            color: #fff;
+            border: none;
+            border-radius: 0;
+            font-family: var(--шрифт-текст);
+            font-weight: 500;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.15s ease;
+            margin-top: var(--отступ-1);
+        }
+
+        .форма__кнопка:hover:not(:disabled) {
+            background-color: var(--цвет-акцент);
+        }
+
+        .форма__кнопка:active:not(:disabled) {
+            transform: scale(0.98);
+        }
+
+        .форма__кнопка:disabled {
+            opacity: 0.6;
+            cursor: default;
+        }
+
+        .форма__статус {
+            margin-top: var(--отступ-2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-size: 14px;
+            text-align: center;
+            min-height: 1.4em;
+            opacity: 0;
+            transform: translateY(4px);
+            transition: var(--переход);
+        }
+
+        .форма__статус.видимый {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .форма__статус.успех {
+            color: var(--цвет-второй);
+        }
+
+        .форма__статус.ошибка {
+            color: var(--цвет-вино);
+        }
+
+        .форма__статус-иконка {
+            width: 16px;
+            height: 16px;
+            flex-shrink: 0;
+            stroke-dasharray: 20;
+            stroke-dashoffset: 20;
+        }
+
+        .форма__статус.видимый .форма__статус-иконка {
+            animation: рисоватьГалочку 0.5s var(--лёгкость) 0.1s forwards;
+        }
+
+        @keyframes рисоватьГалочку {
+            to { stroke-dashoffset: 0; }
+        }
+
+        /* ============================================================
+           КНОПКА МУЗЫКИ
+           ============================================================ */
+
+        .кнопка-музыки {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            width: 52px;
+            height: 52px;
+            background: var(--цвет-вино);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 2147483647;
+            cursor: pointer;
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.18);
+            visibility: hidden;
+            opacity: 0;
+            transition: opacity 0.4s ease, transform 0.3s ease;
+        }
+
+        .кнопка-музыки:hover {
+            transform: scale(1.06);
+        }
+
+        .кнопка-музыки svg {
+            width: 20px;
+            height: 20px;
+            fill: #fbf8f2;
+        }
+
+        /* ============================================================
+           АДАПТИВНЫЙ ДИЗАЙН (мобильные устройства)
+           ============================================================ */
+
+        @media (max-width: 600px) {
+            .отсчёт {
+                gap: var(--отступ-1);
+            }
+
+            .галерея {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .секция {
+                padding: var(--отступ-4) var(--отступ-2);
+            }
+
+            .форма {
+                padding: var(--отступ-3) var(--отступ-2);
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+
+        .скрыто {
+            display: none !important;
+        }
+
+    </style>
+</head>
+
+<body class="заблокировано">
+
+    <!-- Единая веточка-орнамент, переиспользуемая через <use> над каждым заголовком секции -->
+    <svg style="position:absolute; width:0; height:0; overflow:hidden;" aria-hidden="true">
+        <symbol id="орнамент-веточка" viewBox="0 0 34 20">
+            <path d="M17 20V4" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round"/>
+            <path d="M17 10c-3-1-5-4-5-7 3 0 6 2 7 5" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M17 10c3-1 5-4 5-7-3 0-6 2-7 5" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M17 15c-2-1-3.5-2.5-3.5-4.5 2 0 3.8 1.2 4.5 3" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M17 15c2-1 3.5-2.5 3.5-4.5-2 0-3.8 1.2-4.5 3" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="17" cy="3" r="1.3" fill="currentColor"/>
+        </symbol>
+    </svg>
+
+    <!-- ================================================================
+         ВИДЕО-СЛОЙ ОТКРЫТИЯ - видео-открытие конверта
+         ================================================================ -->
+    <div id="видео-открытие" style="
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100svh;
+        z-index: 1001;
+        background: var(--цвет-глубокий);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 1;
+        transition: opacity 0.9s ease;
+    ">
+        <video id="видео-входа"
+            style="
+                width: 100%;
+                max-width: 440px;
+                height: auto;
+                object-fit: contain;
+                cursor: pointer;
+            "
+            muted
+            playsinline
+            preload="auto">
+            <source src="media/video_A_M_accurate.mp4" type="video/mp4">
+        </video>
+    </div>
+
+    <!-- ================================================================
+         ОСНОВНОЙ КОНТЕНТ ПРИГЛАШЕНИЯ
+         ================================================================ -->
+    <div class="основной-контент" id="основной-контент">
+
+        <div class="обложка" id="обложка">
+            <video class="обложка__фон" autoplay muted loop playsinline preload="auto">
+                <source src="media/Swans2_1_qwzsod_xbAR.mp4" type="video/mp4">
+            </video>
+            <div class="обложка__содержимое">
+                <div class="обложка__эпиграф">Мы приглашаем вас разделить наш день</div>
+                <h1 class="обложка__имена">
+                    <span id="имя-1">Имя</span><span class="амперсанд">&amp;</span><span id="имя-2">Имя</span>
+                </h1>
+                <div class="обложка__дата">
+                    <div class="разделитель"></div>
+                    <span id="дата-обложки">31 декабря 2026</span>
+                </div>
+            </div>
+            <div class="обложка__подсказка">
+                <span>Открыть приглашение</span>
+                <svg viewBox="0 0 14 20" fill="none"><path d="M7 1v16M2 12l5 5 5-5" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+        </div>
+
+        <!-- ВВОДНАЯ СЕКЦИЯ -->
+        <div class="секция">
+            <div class="секция__внутри">
+                <svg class="секция__орнамент" viewBox="0 0 34 20"><use href="#орнамент-веточка"/></svg>
+                <span class="секция__эпиграф">Дорогие гости</span>
+                <h2 class="секция__заголовок" id="вводный-заголовок">Дорогие друзья!</h2>
+                <div class="разделитель"></div>
+                <p class="секция__текст" id="вводный-текст">
+                    Мы с радостью приглашаем вас разделить с нами самый важный день нашей жизни — день,
+                    когда две истории становятся одной. Приходите и создавайте воспоминания вместе с нами!
+                </p>
+            </div>
+        </div>
+
+        <!-- ОБРАТНЫЙ ОТСЧЁТ -->
+        <div class="секция">
+            <div class="секция__внутри">
+                <svg class="секция__орнамент" viewBox="0 0 34 20"><use href="#орнамент-веточка"/></svg>
+                <span class="секция__эпиграф">До встречи осталось</span>
+                <h2 class="секция__заголовок">Обратный отсчёт</h2>
+                <div class="отсчёт" id="отсчёт">
+                    <div class="отсчёт__элемент">
+                        <div class="отсчёт__число" id="дни">00</div>
+                        <div class="отсчёт__название">Дней</div>
+                    </div>
+                    <div class="отсчёт__элемент">
+                        <div class="отсчёт__число" id="часы">00</div>
+                        <div class="отсчёт__название">Часов</div>
+                    </div>
+                    <div class="отсчёт__элемент">
+                        <div class="отсчёт__число" id="минуты">00</div>
+                        <div class="отсчёт__название">Минут</div>
+                    </div>
+                    <div class="отсчёт__элемент">
+                        <div class="отсчёт__число" id="секунды">00</div>
+                        <div class="отсчёт__название">Секунд</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ПРОГРАММА ДНЯ -->
+        <div class="секция">
+            <div class="секция__внутри">
+                <svg class="секция__орнамент" viewBox="0 0 34 20"><use href="#орнамент-веточка"/></svg>
+                <span class="секция__эпиграф">Как пройдёт день</span>
+                <h2 class="секция__заголовок">Программа дня</h2>
+                <div class="расписание" id="расписание">
+                    <!-- Будет заполнено JavaScript -->
+                </div>
+            </div>
+        </div>
+
+        <!-- МЕСТО ПРОВЕДЕНИЯ -->
+        <div class="секция">
+            <div class="секция__внутри">
+                <svg class="секция__орнамент" viewBox="0 0 34 20"><use href="#орнамент-веточка"/></svg>
+                <span class="секция__эпиграф">Где всё случится</span>
+                <h2 class="секция__заголовок">Место проведения</h2>
+                <div class="адрес">
+                    <div class="адрес__название" id="название-места">Название площадки</div>
+                    <div class="адрес__текст" id="адрес-место">Город, улица, дом</div>
+                </div>
+                <div class="карта" id="карта-контейнер">
+                    <p style="padding: 20px; text-align: center; color: var(--цвет-текст-мягкий); font-size: 14px;">
+                        Карта будет здесь (добавьте ссылку на Google Maps)
+                    </p>
+                </div>
+                <div class="карточки" id="информационные-карточки"></div>
+            </div>
+        </div>
+
+        <!-- ГАЛЕРЕЯ (ФОТО И ВИДЕО) -->
+        <div class="секция">
+            <div class="секция__внутри">
+                <svg class="секция__орнамент" viewBox="0 0 34 20"><use href="#орнамент-веточка"/></svg>
+                <span class="секция__эпиграф">На память</span>
+                <h2 class="секция__заголовок">Медиа</h2>
+                <p class="секция__текст" style="font-size: 14px; color: var(--цвет-текст-мягкий);">
+                    Фото и видео загружаются из папки «media»
+                </p>
+                <div class="галерея" id="галерея">
+                    <!-- Будет заполнено JavaScript -->
+                </div>
+            </div>
+        </div>
+
+        <!-- ФОРМА ОТВЕТА (RSVP) -->
+        <div class="секция">
+            <div class="секция__внутри">
+                <svg class="секция__орнамент" viewBox="0 0 34 20"><use href="#орнамент-веточка"/></svg>
+                <span class="секция__эпиграф">Ждём ответа</span>
+                <h2 class="секция__заголовок">Подтвердите присутствие</h2>
+
+                <div class="форма-обёртка">
+                    <form class="форма" id="форма-ответа" novalidate>
+                        <div class="форма__группа форма__группа--плавающая">
+                            <input type="text" class="форма__поле" id="поле-имя" placeholder=" " required>
+                            <label class="форма__метка-плавающая" for="поле-имя">Ваше имя *</label>
+                        </div>
+
+                        <div class="форма__группа">
+                            <label class="форма__метка">Вы придёте? *</label>
+                            <div class="пилюли" id="группа-ответ">
+                                <input type="radio" name="ответ" id="ответ-да" value="Да, я приду" required>
+                                <label for="ответ-да">Да, приду!</label>
+                                <input type="radio" name="ответ" id="ответ-нет" value="Нет, не смогу">
+                                <label for="ответ-нет">Не смогу</label>
+                                <input type="radio" name="ответ" id="ответ-возможно" value="Ещё не решил">
+                                <label for="ответ-возможно">Ещё не решил</label>
+                            </div>
+                        </div>
+
+                        <div class="форма__группа">
+                            <label class="форма__метка">Вы с ребёнком? *</label>
+                            <div class="пилюли" id="группа-ребёнок">
+                                <input type="radio" name="ребёнок" id="ребёнок-да" value="Да, с своим ребёнком" required>
+                                <label for="ребёнок-да">Да, с ребёнком</label>
+                                <input type="radio" name="ребёнок" id="ребёнок-нет" value="Нет, только я">
+                                <label for="ребёнок-нет">Нет, только я</label>
+                            </div>
+                        </div>
+
+                        <div class="форма__группа форма__группа--плавающая">
+                            <textarea class="форма__поле" id="поле-комментарий" rows="3" placeholder=" "></textarea>
+                            <label class="форма__метка-плавающая" for="поле-комментарий">Комментарий (пожелание)</label>
+                        </div>
+
+                        <button type="submit" class="форма__кнопка" id="кнопка-отправки">Отправить ответ</button>
+                        <div class="форма__статус" id="форма-статус">
+                            <svg class="форма__статус-иконка скрыто" id="форма-статус-галочка" viewBox="0 0 20 20" fill="none" stroke="currentColor">
+                                <path d="M4 10l4 4 8-8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                            <span id="форма-статус-текст"></span>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- ЗАКРЫВАЮЩАЯ СЕКЦИЯ -->
+        <div class="секция">
+            <div class="секция__внутри">
+                <svg class="секция__орнамент" viewBox="0 0 34 20"><use href="#орнамент-веточка"/></svg>
+                <h2 class="секция__заголовок" id="закрывающий-заголовок">Спасибо!</h2>
+                <div class="разделитель"></div>
+                <p class="секция__текст" id="закрывающий-текст">
+                    До встречи на нашем празднике! С любовью и благодарностью.
+                </p>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Кнопка воспроизведения музыки -->
+    <div id="кнопка-музыки" class="кнопка-музыки">
+        <svg id="иконка-пауза" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" style="display:block;">
+            <rect x="6" y="5" width="4" height="14" rx="1"></rect>
+            <rect x="14" y="5" width="4" height="14" rx="1"></rect>
+        </svg>
+        <svg id="иконка-play" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" style="display:none;">
+            <polygon points="5,3 19,12 5,21"></polygon>
+        </svg>
+    </div>
+
+    <!-- Аудио для фоновой музыки -->
+    <audio id="фоновая-музыка" loop>
+        <source src="media/Einaudi-Divenire-1-1_LS3-.mp3" type="audio/mpeg">
+    </audio>
+
+    <!-- Клиент Supabase (для отправки ответов гостей) -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+
+    <!-- ================================================================
+         JAVASCRIPT (весь код приложения)
+         ================================================================ -->
+    <script>
+        // ============================================================
+        // 1. КОНФИГУРАЦИЯ - МЕНЯЙТЕ ТОЛЬКО ЭТИ ЗНАЧЕНИЯ
+        // ============================================================
+
+        const КОНФИГ = {
+            // Имена молодожёнов
+            имя1: "Имя",
+            имя2: "Имя",
+
+            // Дата свадьбы в формате: ГГГГ-ММ-ДД T ЧЧ:ММ:СС
+            датаСвадьбы: "2026-12-31T17:00:00",
+
+            // Как дата будет показана на обложке
+            датаТекст: "31 декабря 2026",
+
+            // Вводный текст
+            вводныйЗаголовок: "Дорогие друзья!",
+            вводныйТекст: "Мы с радостью приглашаем вас разделить с нами самый важный день нашей жизни — день, когда две истории становятся одной. Приходите и создавайте воспоминания вместе с нами!",
+
+            // Закрывающий текст
+            закрывающийЗаголовок: "Спасибо!",
+            закрывающийТекст: "До встречи на нашем празднике! С любовью и благодарностью.",
+
+            // Программа дня (можно добавлять/удалять пункты)
+            программа: [
+                { время: "16:00", название: "Сбор гостей" },
+                { время: "17:00", название: "Церемония" },
+                { время: "18:00", название: "Фотосессия и фуршет" },
+                { время: "19:30", название: "Банкет" },
+                { время: "21:00", название: "Танцы" }
+            ],
+
+            // Место проведения
+            названиеМеста: "Название площадки",
+            адресМеста: "Город, улица, дом",
+            картаURL: "", // Оставьте пусто если нет карты
+
+            показатьПодарки: true,
+            подаркиЗаголовок: "Подарки",
+
+            // ----------------------------------------------------------
+            // SUPABASE — сюда ответы гостей отправляются напрямую из браузера.
+            // 1. Создайте бесплатный проект на supabase.com
+            // 2. В Project Settings → API возьмите "Project URL" и "anon public" ключ
+            // 3. Вставьте их сюда. Инструкцию по созданию таблицы см. в комментарии
+            //    рядом с функцией инициализироватьФорму() ниже.
+            // ----------------------------------------------------------
+            supabaseUrl: "https://vujwjzzbnsttomdyrqxh.supabase.co",
+            supabaseAnonKey: "sb_publishable_6Wk47Ht6hMbUinlDHQ84Rw_I9Bgfwmz",
+            supabaseТаблица: "rsvp",
+        };
+
+        // ============================================================
+        // 2. ИНИЦИАЛИЗАЦИЯ - запуск приложения при загрузке
+        // ============================================================
+
+        document.addEventListener('DOMContentLoaded', функцияПриЗагрузке);
+
+        function функцияПриЗагрузке() {
+            заполнитьТекст();
+            инициализироватьОбложку();
+            запуститьОтсчёт();
+            загрузитьПрограмму();
+            загрузитьИнформацию();
+            загрузитьМедиа();
+            инициализироватьФорму();
+            инициализироватьМузыку();
+            инициализироватьПоявлениеСекций();
+        }
+
+        // ============================================================
+        // 3. ФУНКЦИЯ: Заполнить текст из конфигурации
+        // ============================================================
+
+        function заполнитьТекст() {
+            document.getElementById('имя-1').textContent = КОНФИГ.имя1;
+            document.getElementById('имя-2').textContent = КОНФИГ.имя2;
+            document.getElementById('дата-обложки').textContent = КОНФИГ.датаТекст;
+
+            document.getElementById('вводный-заголовок').textContent = КОНФИГ.вводныйЗаголовок;
+            document.getElementById('вводный-текст').textContent = КОНФИГ.вводныйТекст;
+
+            document.getElementById('название-места').textContent = КОНФИГ.названиеМеста;
+            document.getElementById('адрес-место').textContent = КОНФИГ.адресМеста;
+
+            document.getElementById('закрывающий-заголовок').textContent = КОНФИГ.закрывающийЗаголовок;
+            document.getElementById('закрывающий-текст').textContent = КОНФИГ.закрывающийТекст;
+        }
+
+        // ============================================================
+        // 4. ФУНКЦИЯ: Инициализировать обложку с видео-эффектом открытия конверта
+        // ============================================================
+
+        function инициализироватьОбложку() {
+            const содержимое = document.getElementById('основной-контент');
+            const видеоОтрытие = document.getElementById('видео-открытие');
+            const видео = document.getElementById('видео-входа');
+            const кнопка = document.getElementById('кнопка-музыки');
+
+            let завершено = false;
+            содержимое.classList.remove('видимый');
+            видеоОтрытие.style.display = 'flex';
+            видеоОтрытие.style.opacity = '1';
+
+            видео.addEventListener('click', воспроизвестиВидео);
+            видео.addEventListener('error', показатьКонтент, { once: true });
+            видео.addEventListener('ended', показатьКонтент, { once: true });
+
+            function воспроизвестиВидео() {
+                const воспроизведение = видео.play();
+                if (воспроизведение && воспроизведение.catch) {
+                    воспроизведение.catch(() => {});
+                }
+            }
+
+            function показатьКонтент() {
+                if (завершено) return;
+                завершено = true;
+                видео.pause();
+                видеоОтрытие.style.opacity = '0';
+                содержимое.classList.add('видимый');
+
+                setTimeout(() => {
+                    видеоОтрытие.style.display = 'none';
+                }, 800);
+
+                кнопка.style.visibility = 'visible';
+                кнопка.style.opacity = '1';
+                document.body.classList.remove('заблокировано');
+            }
+        }
+
+        // ============================================================
+        // 5. ФУНКЦИЯ: Обратный отсчёт
+        // ============================================================
+
+        function запуститьОтсчёт() {
+            const датаСвадьбы = new Date(КОНФИГ.датаСвадьбы).getTime();
+            const поля = {
+                дни: document.getElementById('дни'),
+                часы: document.getElementById('часы'),
+                минуты: document.getElementById('минуты'),
+                секунды: document.getElementById('секунды')
+            };
+            const предыдущие = { дни: '', часы: '', минуты: '', секунды: '' };
+
+            function обновитьЗначение(ключ, значение) {
+                if (предыдущие[ключ] === значение) return;
+                предыдущие[ключ] = значение;
+                поля[ключ].textContent = значение;
+                поля[ключ].classList.add('тик');
+                setTimeout(() => поля[ключ].classList.remove('тик'), 250);
+            }
+
+            function обновитьОтсчёт() {
+                const сейчас = new Date().getTime();
+                const разница = датаСвадьбы - сейчас;
+
+                if (разница < 0) {
+                    Object.values(поля).forEach(поле => поле.textContent = '—');
+                    return;
+                }
+
+                const дни = Math.floor(разница / (1000 * 60 * 60 * 24));
+                const часы = Math.floor((разница % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const минуты = Math.floor((разница % (1000 * 60 * 60)) / (1000 * 60));
+                const секунды = Math.floor((разница % (1000 * 60)) / 1000);
+
+                обновитьЗначение('дни', String(дни).padStart(2, '0'));
+                обновитьЗначение('часы', String(часы).padStart(2, '0'));
+                обновитьЗначение('минуты', String(минуты).padStart(2, '0'));
+                обновитьЗначение('секунды', String(секунды).padStart(2, '0'));
+            }
+
+            обновитьОтсчёт();
+            setInterval(обновитьОтсчёт, 1000);
+        }
+
+        // ============================================================
+        // 6. ФУНКЦИЯ: Загрузить программу дня
+        // ============================================================
+
+        function загрузитьПрограмму() {
+            const расписание = document.getElementById('расписание');
+            расписание.innerHTML = '';
+
+            КОНФИГ.программа.forEach(пункт => {
+                const элемент = document.createElement('div');
+                элемент.className = 'расписание__пункт';
+                элемент.innerHTML = `
+                    <div class="расписание__время">${пункт.время}</div>
+                    <div class="расписание__название">${пункт.название}</div>
+                `;
+                расписание.appendChild(элемент);
+            });
+        }
+
+        // ============================================================
+        // 7. ФУНКЦИЯ: Загрузить информацию
+        // ============================================================
+
+        function загрузитьИнформацию() {
+            const контейнер = document.getElementById('информационные-карточки');
+            контейнер.innerHTML = '';
+
+            if (КОНФИГ.показатьПодарки) {
+                const карточка = document.createElement('div');
+                карточка.className = 'карточка';
+                карточка.innerHTML = `
+                    <h3 class="карточка__заголовок">${КОНФИГ.подаркиЗаголовок}</h3>
+                `;
+                контейнер.appendChild(карточка);
+            }
+        }
+
+        // ============================================================
+        // 8. ФУНКЦИЯ: Загрузить медиа (фото и видео)
+        // ============================================================
+
+        function загрузитьМедиа() {
+            const галерея = document.getElementById('галерея');
+            галерея.innerHTML = '';
+
+            // Создайте папку "media" рядом с index.html и добавьте туда файлы,
+            // затем замените этот блок на реальные <img>/<video> элементы.
+            const подсказка = document.createElement('p');
+            подсказка.className = 'галерея__подсказка';
+            подсказка.textContent = 'Создайте папку «media» и добавьте туда фото и видео';
+            галерея.appendChild(подсказка);
+        }
+
+        // ============================================================
+        // 9. ФУНКЦИЯ: Инициализировать форму ответа (RSVP → Supabase)
+        // ============================================================
+        //
+        // Чтобы форма реально сохраняла ответы гостей, создайте в Supabase
+        // таблицу следующим SQL-запросом (SQL Editor в панели Supabase):
+        //
+        //   create table rsvp (
+        //     id uuid primary key default gen_random_uuid(),
+        //     имя text not null,
+        //     ответ text not null,
+        //     ребёнок text,
+        //     комментарий text,
+        //     создано_в timestamptz default now()
+        //   );
+        //
+        //   alter table rsvp enable row level security;
+        //
+        //   create policy "Публичная запись" on rsvp
+        //     for insert to anon
+        //     with check (true);
+        //
+        // Читать ответы гостей проще всего в Table Editor в панели Supabase.
+        // Ключ anon специально предназначен для использования в браузере —
+        // безопасность обеспечивает именно политика RLS выше (только запись,
+        // без чтения посторонними).
+        // ============================================================
+
+        let supabaseКлиент = null;
+
+        function получитьSupabaseКлиент() {
+            if (supabaseКлиент) return supabaseКлиент;
+            const настроен = КОНФИГ.supabaseUrl && КОНФИГ.supabaseAnonKey &&
+                !КОНФИГ.supabaseUrl.includes('ВАШ_') && !КОНФИГ.supabaseAnonKey.includes('ВАШ_');
+            if (!настроен || typeof supabase === 'undefined') return null;
+            supabaseКлиент = supabase.createClient(КОНФИГ.supabaseUrl, КОНФИГ.supabaseAnonKey);
+            return supabaseКлиент;
+        }
+
+        function инициализироватьФорму() {
+            const форма = document.getElementById('форма-ответа');
+            const кнопка = document.getElementById('кнопка-отправки');
+            const статус = document.getElementById('форма-статус');
+            const статусТекст = document.getElementById('форма-статус-текст');
+            const статусГалочка = document.getElementById('форма-статус-галочка');
+
+            форма.addEventListener('submit', async function(событие) {
+                событие.preventDefault();
+
+                const полеИмя = document.getElementById('поле-имя');
+                const ответЭлемент = форма.querySelector('input[name="ответ"]:checked');
+                const ребёнокЭлемент = форма.querySelector('input[name="ребёнок"]:checked');
+
+                const данные = {
+                    имя: полеИмя.value.trim(),
+                    ответ: ответЭлемент ? ответЭлемент.value : '',
+                    ребёнок: ребёнокЭлемент ? ребёнокЭлемент.value : '',
+                    комментарий: document.getElementById('поле-комментарий').value.trim()
+                };
+
+                // Ручная проверка обязательных полей — у формы стоит novalidate,
+                // чтобы браузер не рисовал стандартные подсказки поверх "таблеток"
+                if (!данные.имя) {
+                    показатьСтатус('Пожалуйста, укажите ваше имя.', 'ошибка');
+                    полеИмя.focus();
+                    return;
+                }
+                if (!данные.ответ) {
+                    показатьСтатус('Пожалуйста, выберите, придёте ли вы.', 'ошибка');
+                    return;
+                }
+                if (!данные.ребёнок) {
+                    показатьСтатус('Пожалуйста, укажите, будете ли вы с ребёнком.', 'ошибка');
+                    return;
+                }
+
+                кнопка.disabled = true;
+                кнопка.textContent = 'Отправка...';
+                показатьСтатус('', null);
+
+                const клиент = получитьSupabaseКлиент();
+
+                if (клиент) {
+                    try {
+                        const { error } = await клиент.from(КОНФИГ.supabaseТаблица).insert([данные]);
+                        if (error) throw error;
+                        показатьСтатус('Спасибо! Ваш ответ отправлен.', 'успех', true);
+                        форма.reset();
+                    } catch (ошибка) {
+                        console.error('Ошибка отправки в Supabase:', ошибка);
+                        показатьСтатус('Не удалось отправить ответ. Попробуйте ещё раз чуть позже.', 'ошибка');
+                    }
+                } else {
+                    // Supabase ещё не настроен — сохраняем локально, чтобы форма не выглядела сломанной,
+                    // и явно предупреждаем в консоли, что нужно донастроить КОНФИГ.supabaseUrl / supabaseAnonKey.
+                    console.warn('Supabase не настроен: заполните supabaseUrl и supabaseAnonKey в КОНФИГ. Ответ сохранён только локально.');
+                    let все_ответы = JSON.parse(localStorage.getItem('ответы_гостей') || '[]');
+                    все_ответы.push({ ...данные, датаОтправки: new Date().toLocaleString('ru-RU') });
+                    localStorage.setItem('ответы_гостей', JSON.stringify(все_ответы));
+                    показатьСтатус('Спасибо! Ваш ответ сохранён.', 'успех', true);
+                    форма.reset();
+                }
+
+                кнопка.disabled = false;
+                кнопка.textContent = 'Отправить ответ';
+            });
+
+            function показатьСтатус(текст, тип, сГалочкой) {
+                статусТекст.textContent = текст;
+                статус.className = 'форма__статус' + (тип ? ' ' + тип : '') + (текст ? ' видимый' : '');
+                статусГалочка.classList.toggle('скрыто', !сГалочкой);
+            }
+        }
+
+        // ============================================================
+        // 10. ФУНКЦИЯ: Инициализировать музыку
+        // ============================================================
+
+        function инициализироватьМузыку() {
+            const аудио = document.getElementById('фоновая-музыка');
+            const кнопка = document.getElementById('кнопка-музыки');
+            const иконкаПауза = document.getElementById('иконка-пауза');
+            const иконкаПлей = document.getElementById('иконка-play');
+
+            кнопка.addEventListener('click', function() {
+                if (аудио.paused) {
+                    const воспроизведение = аудио.play();
+                    if (воспроизведение && воспроизведение.catch) {
+                        воспроизведение.catch(ошибка => {
+                            console.log('Ошибка воспроизведения:', ошибка.message);
+                        });
+                    }
+                    иконкаПауза.style.display = 'block';
+                    иконкаПлей.style.display = 'none';
+                } else {
+                    аудио.pause();
+                    иконкаПауза.style.display = 'none';
+                    иконкаПлей.style.display = 'block';
+                }
+            });
+        }
+
+        // ============================================================
+        // 11. ФУНКЦИЯ: Плавное появление секций и разделителей при прокрутке
+        // ============================================================
+
+        function инициализироватьПоявлениеСекций() {
+            const секции = document.querySelectorAll('.секция');
+
+            if (!('IntersectionObserver' in window)) {
+                секции.forEach(секция => секция.classList.add('в-поле'));
+                return;
+            }
+
+            const наблюдатель = new IntersectionObserver((записи) => {
+                записи.forEach(запись => {
+                    if (запись.isIntersecting) {
+                        запись.target.classList.add('в-поле');
+                        наблюдатель.unobserve(запись.target);
+                    }
+                });
+            }, { threshold: 0.2, rootMargin: '0px 0px -60px 0px' });
+
+            секции.forEach(секция => наблюдатель.observe(секция));
+        }
+
+        // ============================================================
+        // ПОДСКАЗКА: Как посмотреть сохранённые ответы гостей
+        // ============================================================
+        // Если Supabase настроен — открывайте Table Editor в панели Supabase,
+        // там будут видны все ответы гостей в реальном времени.
+        //
+        // Если Supabase ещё не настроен, ответы временно лежат в localStorage
+        // браузера. Откройте консоль (F12) и напишите:
+        // console.log(JSON.parse(localStorage.getItem('ответы_гостей')))
+
+    </script>
+</body>
+</html>
