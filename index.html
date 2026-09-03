@@ -134,13 +134,6 @@
             height: 100%;
             object-fit: cover;
             z-index: 0;
-            transform: scale(1.06);
-            animation: медленныйНаезд 20s ease-in-out infinite alternate;
-        }
-
-        @keyframes медленныйНаезд {
-            from { transform: scale(1.06); }
-            to { transform: scale(1.14); }
         }
 
         .обложка::after {
@@ -171,7 +164,6 @@
             font-size: clamp(11px, 2vw, 13px);
             letter-spacing: 4px;
             text-transform: uppercase;
-            color: var(--цвет-акцент-светлый);
             opacity: 0;
             animation: тихоеПоявление 1s var(--лёгкость) 0.2s forwards;
         }
@@ -218,7 +210,6 @@
         .обложка__подсказка {
             position: absolute;
             bottom: var(--отступ-4);
-            left: 50%;
             transform: translateX(-50%);
             z-index: 1;
             display: flex;
@@ -273,6 +264,17 @@
             opacity: 0;
             transform: translateY(22px);
             transition: opacity 0.9s var(--лёгкость), transform 0.9s var(--лёгкость);
+        }
+
+        .секция--финал {
+            background-image: linear-gradient(rgba(247, 244, 236, 0.72), rgba(247, 244, 236, 0.84)), url("media/images.jpg");
+            background-position: center;
+            background-size: cover;
+            height: 678px;
+        }
+
+        .секция.секция--финал::before {
+            display: none;
         }
 
         .секция.в-поле {
@@ -470,6 +472,12 @@
             overflow: hidden;
             margin: var(--отступ-3) 0;
             border: 1px solid rgba(169, 129, 75, 0.25);
+        }
+
+        .карта iframe {
+            width: 100%;
+            height: 100%;
+            border: 0;
         }
 
         /* ============================================================
@@ -926,7 +934,7 @@
             muted
             playsinline
             preload="auto">
-            <source src="media/video_A_M_accurate.mp4" type="video/mp4">
+            <source src="media/video_AM_recreated.mp4" type="video/mp4">
         </video>
     </div>
 
@@ -1096,8 +1104,9 @@
         </div>
 
         <!-- ЗАКРЫВАЮЩАЯ СЕКЦИЯ -->
-        <div class="секция">
-            <div class="секция__внутри">
+        <div class="секция секция--финал">
+            <div class="секция__внутри" style="margin-top: 100px;">
+                
                 <svg class="секция__орнамент" viewBox="0 0 34 20"><use href="#орнамент-веточка"/></svg>
                 <h2 class="секция__заголовок" id="закрывающий-заголовок">Спасибо!</h2>
                 <div class="разделитель"></div>
@@ -1142,10 +1151,10 @@
             имя2: "Имя",
 
             // Дата свадьбы в формате: ГГГГ-ММ-ДД T ЧЧ:ММ:СС
-            датаСвадьбы: "2026-12-31T17:00:00",
+            датаСвадьбы: "2027-01-11T19:00:00",
 
             // Как дата будет показана на обложке
-            датаТекст: "31 декабря 2026",
+            датаТекст: "11 января 2027",
 
             // Вводный текст
             вводныйЗаголовок: "Дорогие друзья!",
@@ -1165,12 +1174,9 @@
             ],
 
             // Место проведения
-            названиеМеста: "Название площадки",
+            названиеМеста: "Тарабхонаи Абдуворис",
             адресМеста: "Город, улица, дом",
-            картаURL: "", // Оставьте пусто если нет карты
-
-            показатьПодарки: true,
-            подаркиЗаголовок: "Подарки",
+            картаURL: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d762.5658245794074!2d70.6168822096301!3d40.13641837482636!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x38ba7b0034e834ff%3A0x6567d8ca90703f7d!2z0KLQsNGA0LDQsdGF0L7QvdCw0Lgg0JDQsdC00YPQstC-0YDQuNGB!5e0!3m2!1sru!2s!4v1788414571930!5m2!1sru!2s", // Оставьте пусто если нет карты
 
             // ----------------------------------------------------------
             // SUPABASE — сюда ответы гостей отправляются напрямую из браузера.
@@ -1261,6 +1267,19 @@
                 кнопка.style.visibility = 'visible';
                 кнопка.style.opacity = '1';
                 document.body.classList.remove('заблокировано');
+
+                const аудио = document.getElementById('фоновая-музыка');
+                const иконкаПауза = document.getElementById('иконка-пауза');
+                const иконкаПлей = document.getElementById('иконка-play');
+                const воспроизведение = аудио.play();
+                if (воспроизведение && воспроизведение.then) {
+                    воспроизведение.then(() => {
+                        иконкаПауза.style.display = 'block';
+                        иконкаПлей.style.display = 'none';
+                    }).catch(ошибка => {
+                        console.log('Автовоспроизведение музыки недоступно:', ошибка.message);
+                    });
+                }
             }
         }
 
@@ -1334,17 +1353,23 @@
         // ============================================================
 
         function загрузитьИнформацию() {
+            const карта = document.getElementById('карта-контейнер');
             const контейнер = document.getElementById('информационные-карточки');
             контейнер.innerHTML = '';
 
-            if (КОНФИГ.показатьПодарки) {
-                const карточка = document.createElement('div');
-                карточка.className = 'карточка';
-                карточка.innerHTML = `
-                    <h3 class="карточка__заголовок">${КОНФИГ.подаркиЗаголовок}</h3>
-                `;
-                контейнер.appendChild(карточка);
+            карта.innerHTML = '';
+            if (КОНФИГ.картаURL) {
+                const iframe = document.createElement('iframe');
+                iframe.src = КОНФИГ.картаURL;
+                iframe.title = 'Карта места проведения';
+                iframe.loading = 'lazy';
+                iframe.referrerPolicy = 'no-referrer-when-downgrade';
+                iframe.allowFullscreen = true;
+                карта.appendChild(iframe);
+            } else {
+                карта.innerHTML = '<p style="padding: 20px; text-align: center; color: var(--цвет-текст-мягкий); font-size: 14px;">Карта будет здесь (добавьте ссылку на Google Maps)</p>';
             }
+
         }
 
         // ============================================================
