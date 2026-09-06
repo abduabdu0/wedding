@@ -12,6 +12,12 @@
     <meta property="og:title" content="Приглашение на свадьбу">
     <meta property="og:description" content="Приходите разделить с нами самый важный день">
     <meta property="og:type" content="website">
+    <!-- Чтобы в WhatsApp/Telegram при пересылке ссылки появлялась красивая картинка,
+         добавьте файл media/og-image.jpg (1200×630) и раскомментируйте строку ниже -->
+    <!-- <meta property="og:image" content="media/og-image.jpg"> -->
+
+    <!-- Иконка вкладки — тонкое золотое сердце, без внешних файлов -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><rect width='24' height='24' rx='5' fill='%23221e18'/><path d='M12 18.5s-6-4-7.7-7.3C3 8.3 4.7 5 7.7 5c1.7 0 3 1 3.7 2.1C12.1 6 13.4 5 15.1 5c3 0 4.7 3.3 3.4 6.2C16.8 14.5 12 18.5 12 18.5z' fill='none' stroke='%23cdab7c' stroke-width='1.4'/></svg>">
 
     <!-- Шрифты: Cormorant Garamond — заголовки и цифры, Jost — текст, Parisienne — имена молодожёнов -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -75,6 +81,9 @@
             font-size: 16px;
             line-height: 1.7;
             overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            text-rendering: optimizeLegibility;
         }
 
         body.заблокировано {
@@ -107,6 +116,58 @@
 
         .в-поле .разделитель {
             width: 64px;
+        }
+
+        /* Лёгкая каскадная анимация — карточки, пункты программы, цифры отсчёта
+           и поля формы плавно появляются по очереди при прокрутке до секции */
+        .расписание__пункт,
+        .карточка,
+        .отсчёт__элемент,
+        .форма__группа {
+            opacity: 0;
+            transform: translateY(14px);
+            transition: opacity 0.6s var(--лёгкость), transform 0.6s var(--лёгкость);
+        }
+
+        .в-поле .расписание__пункт,
+        .в-поле .карточка,
+        .в-поле .отсчёт__элемент,
+        .в-поле .форма__группа {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .в-поле .расписание__пункт:nth-child(1),
+        .в-поле .отсчёт__элемент:nth-child(1),
+        .в-поле .карточка:nth-child(1),
+        .в-поле .форма__группа:nth-child(1) { transition-delay: 0.05s; }
+
+        .в-поле .расписание__пункт:nth-child(2),
+        .в-поле .отсчёт__элемент:nth-child(2),
+        .в-поле .карточка:nth-child(2),
+        .в-поле .форма__группа:nth-child(2) { transition-delay: 0.15s; }
+
+        .в-поле .расписание__пункт:nth-child(3),
+        .в-поле .отсчёт__элемент:nth-child(3),
+        .в-поле .карточка:nth-child(3),
+        .в-поле .форма__группа:nth-child(3) { transition-delay: 0.25s; }
+
+        .в-поле .расписание__пункт:nth-child(4),
+        .в-поле .отсчёт__элемент:nth-child(4),
+        .в-поле .форма__группа:nth-child(4) { transition-delay: 0.35s; }
+
+        .в-поле .расписание__пункт:nth-child(5) { transition-delay: 0.45s; }
+        .в-поле .расписание__пункт:nth-child(6) { transition-delay: 0.55s; }
+
+        @media (prefers-reduced-motion: reduce) {
+            .расписание__пункт,
+            .карточка,
+            .отсчёт__элемент,
+            .форма__группа {
+                transition: none;
+                opacity: 1;
+                transform: none;
+            }
         }
 
         /* Разделитель-сердце — тот же приём, что и обычная линия, но с бьющимся
@@ -454,6 +515,7 @@
             margin-bottom: var(--отступ-1);
             text-align: center;
             letter-spacing: 0.3px;
+            text-wrap: balance;
         }
 
         .секция__текст {
@@ -464,6 +526,18 @@
             text-align: center;
             max-width: 52ch;
             margin: 0 auto var(--отступ-2);
+            text-wrap: pretty;
+        }
+
+        /* Декоративная буквица — акцент только на вступительном тексте,
+           единственном месте, где это уместно. Без float, чтобы не ломать
+           центрированную вёрстку текста. */
+        .секция__текст--буквица::first-letter {
+            font-family: var(--шрифт-заголовок);
+            font-style: italic;
+            font-weight: 600;
+            font-size: 1.7em;
+            color: var(--цвет-акцент);
         }
 
         /* ============================================================
@@ -473,15 +547,15 @@
         .расписание {
             position: relative;
             margin-top: var(--отступ-4);
-            padding-left: 28px;
+            padding-left: 56px;
         }
 
         .расписание::before {
             content: '';
             position: absolute;
-            left: 4px;
-            top: 6px;
-            bottom: 6px;
+            left: 30px;
+            top: 8px;
+            bottom: 8px;
             width: 1px;
             background: linear-gradient(var(--цвет-акцент-светлый), var(--цвет-акцент-светлый)) no-repeat;
             background-size: 100% 0%;
@@ -494,28 +568,37 @@
 
         .расписание__пункт {
             position: relative;
-            padding: 0 0 var(--отступ-3) var(--отступ-3);
+            padding: 0 0 var(--отступ-3) 16px;
         }
 
         .расписание__пункт:last-child {
             padding-bottom: 0;
         }
 
-        .расписание__пункт::before {
-            content: '';
+        .расписание__значок {
             position: absolute;
-            left: -28px;
-            top: 6px;
-            width: 9px;
-            height: 9px;
+            left: -40px;
+            top: 0;
+            width: 30px;
+            height: 30px;
             border-radius: 50%;
             background: var(--цвет-фон);
             border: 1px solid var(--цвет-акцент);
+            color: var(--цвет-акцент);
+            display: flex;
+            align-items: center;
+            justify-content: center;
             transition: var(--переход);
         }
 
-        .расписание__пункт:hover::before {
+        .расписание__значок svg {
+            width: 15px;
+            height: 15px;
+        }
+
+        .расписание__пункт:hover .расписание__значок {
             background: var(--цвет-акцент);
+            color: #fff;
         }
 
         .расписание__время {
@@ -536,20 +619,73 @@
            МЕСТО И КАРТА
            ============================================================ */
 
+        /* Единая "карточка площадки" — адрес, карта и кнопки внутри одного
+           стеклянного блока, в том же языке, что и карточка формы RSVP */
+        .площадка {
+            position: relative;
+            background: linear-gradient(155deg, rgba(255,255,255,0.55), rgba(255,253,247,0.28));
+            backdrop-filter: blur(26px) saturate(180%);
+            -webkit-backdrop-filter: blur(26px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.55);
+            border-radius: 26px;
+            box-shadow:
+                0 24px 60px -24px rgba(43, 40, 35, 0.35),
+                0 2px 8px rgba(43, 40, 35, 0.08),
+                inset 0 1px 0 rgba(255, 255, 255, 0.75),
+                inset 0 -1px 0 rgba(169, 129, 75, 0.12);
+            padding: var(--отступ-3);
+            margin-top: var(--отступ-3);
+            overflow: hidden;
+        }
+
+        @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+            .площадка {
+                background: var(--цвет-бумага);
+            }
+        }
+
+        /* Блик стекла — тот же приём, что и на карточке формы */
+        .площадка::before {
+            content: '';
+            position: absolute;
+            top: -30%;
+            left: -20%;
+            width: 70%;
+            height: 60%;
+            background: radial-gradient(closest-side, rgba(255,255,255,0.55), rgba(255,255,255,0));
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .площадка > * {
+            position: relative;
+            z-index: 1;
+        }
+
         .адрес {
             text-align: center;
-            padding: var(--отступ-3) 0;
-            margin: var(--отступ-2) 0 var(--отступ-3);
-            border-top: 1px solid rgba(169, 129, 75, 0.2);
+            padding-bottom: var(--отступ-2);
+            margin-bottom: var(--отступ-2);
             border-bottom: 1px solid rgba(169, 129, 75, 0.2);
         }
 
         .адрес__название {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
             font-family: var(--шрифт-заголовок);
             font-weight: 600;
             font-size: 22px;
             color: var(--цвет-второй);
             margin-bottom: 4px;
+        }
+
+        .адрес__название svg {
+            width: 16px;
+            height: 16px;
+            flex-shrink: 0;
+            color: var(--цвет-акцент);
         }
 
         .адрес__текст {
@@ -559,14 +695,36 @@
         }
 
         .карта {
+            position: relative;
             width: 100%;
             height: clamp(280px, 48vw, 380px);
-            border-radius: 8px;
+            border-radius: 16px;
             overflow: hidden;
-            margin: var(--отступ-3) 0;
+            margin: 0 0 var(--отступ-1);
             border: 1px solid rgba(169, 129, 75, 0.35);
+            background: linear-gradient(120deg, rgba(169,129,75,0.08), rgba(169,129,75,0.15), rgba(169,129,75,0.08));
+            background-size: 200% 100%;
+            animation: мерцаниеЗагрузки 1.6s ease-in-out infinite;
+        }
+
+        .карта.загружена {
+            animation: none;
             background: var(--цвет-бумага);
-            box-shadow: 0 18px 36px -24px rgba(43, 40, 35, 0.5);
+        }
+
+        @keyframes мерцаниеЗагрузки {
+            0% { background-position: 0% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        /* Тёплая виньетка по краям карты — смягчает контраст с общей палитрой */
+        .карта::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            z-index: 1;
+            pointer-events: none;
+            box-shadow: inset 0 0 46px 8px rgba(34, 30, 24, 0.16);
         }
 
         .карта iframe {
@@ -574,6 +732,51 @@
             height: 100%;
             display: block;
             border: 0;
+            opacity: 0;
+            transition: opacity 0.6s ease;
+            /* Тёплый фильтр — приглушает синий/зелёный Google Maps под палитру приглашения */
+            filter: sepia(0.4) saturate(1.25) hue-rotate(-8deg) contrast(0.96) brightness(1.02);
+        }
+
+        .карта.загружена iframe {
+            opacity: 1;
+        }
+
+        .адрес__действия {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            margin-top: var(--отступ-2);
+        }
+
+        .адрес__кнопка {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 9px 18px;
+            font-family: var(--шрифт-текст);
+            font-size: 12.5px;
+            letter-spacing: 0.6px;
+            text-transform: uppercase;
+            color: var(--цвет-второй);
+            text-decoration: none;
+            background: transparent;
+            border: 1px solid rgba(169, 129, 75, 0.4);
+            border-radius: 999px;
+            cursor: pointer;
+            transition: var(--переход);
+        }
+
+        .адрес__кнопка:hover {
+            border-color: var(--цвет-акцент);
+            color: var(--цвет-акцент);
+        }
+
+        .адрес__кнопка svg {
+            width: 14px;
+            height: 14px;
+            flex-shrink: 0;
         }
 
         /* ============================================================
@@ -588,11 +791,23 @@
         }
 
         .карточка {
-            background-color: var(--цвет-бумага);
-            border: 1px solid rgba(169, 129, 75, 0.2);
+            background: linear-gradient(155deg, rgba(255,255,255,0.5), rgba(255,253,247,0.22));
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            border-radius: 18px;
+            box-shadow:
+                0 16px 32px -18px rgba(43, 40, 35, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.7);
             padding: var(--отступ-3);
             text-align: center;
             transition: var(--переход);
+        }
+
+        @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+            .карточка {
+                background: var(--цвет-бумага);
+            }
         }
 
         .карточка:hover {
@@ -657,6 +872,27 @@
             letter-spacing: 2px;
         }
 
+        /* Тёплое сообщение вместо отсчёта, когда дата свадьбы уже наступила */
+        .отсчёт-после {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin: var(--отступ-4) 0 var(--отступ-2);
+            font-family: var(--шрифт-заголовок);
+            font-style: italic;
+            font-size: clamp(18px, 3.4vw, 22px);
+            color: var(--цвет-второй);
+            text-align: center;
+        }
+
+        .отсчёт-после svg {
+            width: 22px;
+            height: 22px;
+            flex-shrink: 0;
+            color: var(--цвет-акцент);
+        }
+
         /* ============================================================
            ФОРМА ОТВЕТА (RSVP) — оформлена как отдельная карточка-приглашение
            ============================================================ */
@@ -669,34 +905,42 @@
 
         .форма {
             position: relative;
-            background-color: var(--цвет-бумага);
-            border: 1px solid rgba(169, 129, 75, 0.3);
-            box-shadow: 0 30px 60px -30px rgba(43, 40, 35, 0.25);
+            background: linear-gradient(155deg, rgba(255,255,255,0.55), rgba(255,253,247,0.28));
+            backdrop-filter: blur(26px) saturate(180%);
+            -webkit-backdrop-filter: blur(26px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.55);
+            border-radius: 26px;
+            box-shadow:
+                0 24px 60px -24px rgba(43, 40, 35, 0.35),
+                0 2px 8px rgba(43, 40, 35, 0.08),
+                inset 0 1px 0 rgba(255, 255, 255, 0.75),
+                inset 0 -1px 0 rgba(169, 129, 75, 0.12);
             padding: var(--отступ-4) var(--отступ-3) var(--отступ-3);
+            overflow: hidden;
         }
 
-        /* Тот же орнамент, что и над заголовками секций — теперь в углах карточки */
-        .форма::before,
-        .форма::after {
+        @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+            .форма {
+                background: var(--цвет-бумага);
+            }
+        }
+
+        /* Блик стекла — мягкое световое пятно в верхнем углу, как на iOS-стекле */
+        .форма::before {
             content: '';
             position: absolute;
-            width: 46px;
-            height: 46px;
-            background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40' fill='none' stroke='%23a9814b' stroke-width='1'><path d='M2 2 C 10 2, 2 10, 2 2 Z M2 2 C 2 16, 16 20, 24 20 M2 2 C 16 2, 20 16, 20 24' opacity='0.55'/></svg>");
-            background-repeat: no-repeat;
-            opacity: 0.9;
+            top: -30%;
+            left: -20%;
+            width: 70%;
+            height: 60%;
+            background: radial-gradient(closest-side, rgba(255,255,255,0.55), rgba(255,255,255,0));
             pointer-events: none;
+            z-index: 0;
         }
 
-        .форма::before {
-            top: -1px;
-            left: -1px;
-        }
-
-        .форма::after {
-            top: -1px;
-            right: -1px;
-            transform: scaleX(-1);
+        .форма > * {
+            position: relative;
+            z-index: 1;
         }
 
         .форма__группа {
@@ -705,7 +949,9 @@
         }
 
         .форма__метка {
-            display: block;
+            display: flex;
+            align-items: center;
+            gap: 6px;
             font-size: 12px;
             letter-spacing: 1.5px;
             text-transform: uppercase;
@@ -713,10 +959,37 @@
             margin-bottom: var(--отступ-1);
         }
 
+        .форма__метка svg {
+            width: 14px;
+            height: 14px;
+            flex-shrink: 0;
+            color: var(--цвет-акцент);
+        }
+
         /* Текстовые поля с плавающей подписью: подпись живёт внутри поля,
            пока оно пустое, и мягко всплывает наверх при фокусе/вводе */
         .форма__группа--плавающая {
             padding-top: 6px;
+        }
+
+        /* Тонкая иконка слева от поля с плавающей подписью */
+        .форма__иконка {
+            position: absolute;
+            left: 2px;
+            top: 17px;
+            width: 15px;
+            height: 15px;
+            color: var(--цвет-текст-мягкий);
+            pointer-events: none;
+            transition: color 0.25s ease;
+        }
+
+        .форма__группа--плавающая:focus-within .форма__иконка {
+            color: var(--цвет-акцент);
+        }
+
+        .форма__группа--плавающая .форма__поле {
+            padding-left: 24px;
         }
 
         .форма__поле {
@@ -740,18 +1013,19 @@
 
         .форма__метка-плавающая {
             position: absolute;
-            left: 2px;
+            left: 24px;
             top: 16px;
             font-size: 16px;
             font-weight: 300;
             color: var(--цвет-текст-мягкий);
             pointer-events: none;
             transform-origin: left top;
-            transition: transform 0.25s var(--лёгкость), color 0.25s ease, top 0.25s ease;
+            transition: transform 0.25s var(--лёгкость), color 0.25s ease, top 0.25s ease, left 0.25s ease;
         }
 
         .форма__поле:focus ~ .форма__метка-плавающая,
         .форма__поле:not(:placeholder-shown) ~ .форма__метка-плавающая {
+            left: 2px;
             top: -8px;
             transform: scale(0.78);
             color: var(--цвет-акцент);
@@ -760,6 +1034,22 @@
         textarea.форма__поле {
             resize: vertical;
             min-height: 64px;
+        }
+
+        /* Лёгкая встряска карточки формы при ошибке валидации */
+        @keyframes встряскаФормы {
+            10%, 90% { transform: translateX(-1px); }
+            20%, 80% { transform: translateX(2px); }
+            30%, 50%, 70% { transform: translateX(-4px); }
+            40%, 60% { transform: translateX(4px); }
+        }
+
+        .форма.встряска {
+            animation: встряскаФормы 0.45s ease;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .форма.встряска { animation: none; }
         }
 
         /* Сегментированный выбор вместо стандартных <select> — компактные "таблетки" */
@@ -779,10 +1069,11 @@
             flex: 1;
             min-width: max-content;
             text-align: center;
-            padding: 10px 16px;
+            padding: 10px 18px;
             font-size: 13.5px;
             color: var(--цвет-текст);
             border: 1px solid rgba(169, 129, 75, 0.35);
+            border-radius: 999px;
             cursor: pointer;
             transition: var(--переход);
             user-select: none;
@@ -807,11 +1098,15 @@
             width: 100%;
             position: relative;
             overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
             padding: var(--отступ-2);
             background-color: var(--цвет-второй);
             color: #fff;
             border: none;
-            border-radius: 0;
+            border-radius: 999px;
             font-family: var(--шрифт-текст);
             font-weight: 500;
             font-size: 13px;
@@ -820,6 +1115,20 @@
             cursor: pointer;
             transition: background-color 0.3s ease, transform 0.15s ease;
             margin-top: var(--отступ-1);
+        }
+
+        .форма__кнопка-сердце {
+            width: 14px;
+            height: 14px;
+            flex-shrink: 0;
+            opacity: 0;
+            transform: translateX(-6px) scale(0.8);
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+
+        .форма__кнопка:hover:not(:disabled) .форма__кнопка-сердце {
+            opacity: 1;
+            transform: translateX(0) scale(1);
         }
 
         .форма__кнопка:hover:not(:disabled) {
@@ -1035,7 +1344,7 @@
                     <svg class="разделитель-сердце__иконка" viewBox="0 0 24 22" fill="none" stroke="currentColor"><path d="M12 20s-7.5-5-9.7-9.3C0.6 7 2.8 3 6.4 3c2.1 0 3.8 1.2 4.8 2.7C12.2 4.2 13.9 3 16 3c3.6 0 5.8 4 4.1 7.7C17.9 15 12 20 12 20z" stroke-width="1.4"/></svg>
                     <span class="разделитель-сердце__линия"></span>
                 </div>
-                <p class="секция__текст" id="вводный-текст">
+                <p class="секция__текст секция__текст--буквица" id="вводный-текст">
                     Мы с радостью приглашаем вас разделить с нами самый важный день нашей жизни — день,
                     когда две истории становятся одной. Приходите и создавайте воспоминания вместе с нами!
                 </p>
@@ -1066,6 +1375,10 @@
                         <div class="отсчёт__название">Секунд</div>
                     </div>
                 </div>
+                <div class="отсчёт-после скрыто" id="отсчёт-после">
+                    <svg viewBox="0 0 20 20" fill="none" stroke="currentColor"><path d="M10 17s-6.2-4.2-7.9-7.7C.7 6 2.6 3 5.9 3c1.9 0 3.3 1.1 4.1 2.4C10.8 4.1 12.2 3 14.1 3c3.3 0 5.2 3 3.8 6.3C16.2 12.8 10 17 10 17z" stroke-width="1.3"/></svg>
+                    <span>Мы поженились! Спасибо, что были с нами.</span>
+                </div>
             </div>
         </div>
 
@@ -1087,14 +1400,22 @@
                 <svg class="секция__орнамент" viewBox="0 0 34 20"><use href="#орнамент-веточка"/></svg>
                 <span class="секция__эпиграф">Где всё случится</span>
                 <h2 class="секция__заголовок">Место проведения</h2>
-                <div class="адрес">
-                    <div class="адрес__название" id="название-места">Название площадки</div>
-                    <div class="адрес__текст" id="адрес-место">Город, улица, дом</div>
-                </div>
-                <div class="карта" id="карта-контейнер">
-                    <p style="padding: 20px; text-align: center; color: var(--цвет-текст-мягкий); font-size: 14px;">
-                        Карта будет здесь (добавьте ссылку на Google Maps)
-                    </p>
+                <div class="площадка">
+                    <div class="адрес">
+                        <img src="media/noroot.png_004_LS3-.webp" style="padding-left: 55px; width: auto; height: 35px;">
+                        <div class="адрес__название">
+                            <svg viewBox="0 0 20 20" fill="none" stroke="currentColor"><path d="M10 18s6-5.5 6-10a6 6 0 10-12 0c0 4.5 6 10 6 10z" stroke-width="1.3"/><circle cx="10" cy="8" r="2.2" stroke-width="1.3"/></svg>
+                            <span id="название-места">Название площадки</span>
+                        </div>
+                        <div class="адрес__текст" id="адрес-место">Город, улица, дом</div>
+                    </div>
+                    <div class="карта" id="карта-контейнер">
+                        
+                        <p style="padding: 20px; text-align: center; color: var(--цвет-текст-мягкий); font-size: 14px;">
+                            Карта будет здесь (добавьте ссылку на Google Maps)
+                        </p>
+                    </div>
+                    <div class="адрес__действия" id="адрес-действия"></div>
                 </div>
                 <div class="карточки" id="информационные-карточки"></div>
             </div>
@@ -1110,12 +1431,16 @@
                 <div class="форма-обёртка">
                     <form class="форма" id="форма-ответа" novalidate>
                         <div class="форма__группа форма__группа--плавающая">
+                            <svg class="форма__иконка" viewBox="0 0 20 20" fill="none" stroke="currentColor"><circle cx="10" cy="6.5" r="3.2" stroke-width="1.3"/><path d="M4 17c0-3.3 2.7-5.5 6-5.5s6 2.2 6 5.5" stroke-width="1.3"/></svg>
                             <input type="text" class="форма__поле" id="поле-имя" placeholder=" " required>
                             <label class="форма__метка-плавающая" for="поле-имя">Ваше имя *</label>
                         </div>
 
                         <div class="форма__группа">
-                            <label class="форма__метка">Вы придёте? *</label>
+                            <label class="форма__метка">
+                                <svg viewBox="0 0 20 20" fill="none" stroke="currentColor"><circle cx="10" cy="10" r="7.2" stroke-width="1.3"/><path d="M7 10.2l2 2 4-4.4" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                                Вы придёте? *
+                            </label>
                             <div class="пилюли" id="группа-ответ">
                                 <input type="radio" name="ответ" id="ответ-да" value="Да, я приду" required>
                                 <label for="ответ-да">Да, приду!</label>
@@ -1127,7 +1452,10 @@
                         </div>
 
                         <div class="форма__группа">
-                            <label class="форма__метка">Вы с ребёнком? *</label>
+                            <label class="форма__метка">
+                                <svg viewBox="0 0 20 20" fill="none" stroke="currentColor"><circle cx="10" cy="5.5" r="2.3" stroke-width="1.3"/><path d="M6 16v-2a4 4 0 018 0v2" stroke-width="1.3"/></svg>
+                                Вы с ребёнком? *
+                            </label>
                             <div class="пилюли" id="группа-ребёнок">
                                 <input type="radio" name="ребёнок" id="ребёнок-да" value="Да, с своим ребёнком" required>
                                 <label for="ребёнок-да">Да, с ребёнком</label>
@@ -1137,11 +1465,15 @@
                         </div>
 
                         <div class="форма__группа форма__группа--плавающая">
+                            <svg class="форма__иконка" viewBox="0 0 20 20" fill="none" stroke="currentColor"><path d="M4 14.5L13.5 5a1.6 1.6 0 012.3 2.3L6.3 16.8l-3 .7.7-3z" stroke-width="1.3" stroke-linejoin="round"/></svg>
                             <textarea class="форма__поле" id="поле-комментарий" rows="3" placeholder=" "></textarea>
                             <label class="форма__метка-плавающая" for="поле-комментарий">Комментарий (пожелание)</label>
                         </div>
 
-                        <button type="submit" class="форма__кнопка" id="кнопка-отправки">Отправить ответ</button>
+                        <button type="submit" class="форма__кнопка" id="кнопка-отправки">
+                            <span class="форма__кнопка-текст">Отправить ответ</span>
+                            <svg class="форма__кнопка-сердце" viewBox="0 0 20 20" fill="none" stroke="currentColor"><path d="M10 17s-6.2-4.2-7.9-7.7C.7 6 2.6 3 5.9 3c1.9 0 3.3 1.1 4.1 2.4C10.8 4.1 12.2 3 14.1 3c3.3 0 5.2 3 3.8 6.3C16.2 12.8 10 17 10 17z" stroke-width="1.4"/></svg>
+                        </button>
                         <div class="форма__статус" id="форма-статус">
                             <svg class="форма__статус-иконка скрыто" id="форма-статус-галочка" viewBox="0 0 20 20" fill="none" stroke="currentColor">
                                 <path d="M4 10l4 4 8-8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -1234,6 +1566,11 @@
             названиеМеста: "Тарабхонаи Абдуворис",
             адресМеста: "Город, улица, дом",
             картаURL: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d762.5658245794074!2d70.6168822096301!3d40.13641837482636!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x38ba7b0034e834ff%3A0x6567d8ca90703f7d!2z0KLQsNGA0LDQsdGF0L7QvdCw0Lgg0JDQsdC00YPQstC-0YDQuNGB!5e0!3m2!1sru!2s!4v1788414571930!5m2!1sru!2s", // Оставьте пусто если нет карты
+
+            // Ссылка «Открыть в Google Maps» (обычная ссылка на карту, не embed-код).
+            // Проще всего: откройте место на google.com/maps, нажмите «Поделиться» и скопируйте ссылку сюда.
+            // Оставьте пустой строкой "", если не нужна отдельная кнопка.
+            картаСсылка: "https://maps.app.goo.gl/ixUAhb9sPoxVPH8M6",
 
             // ----------------------------------------------------------
             // SUPABASE — сюда ответы гостей отправляются напрямую из браузера.
@@ -1352,6 +1689,8 @@
 
         function запуститьОтсчёт() {
             const датаСвадьбы = new Date(КОНФИГ.датаСвадьбы).getTime();
+            const блокОтсчёта = document.getElementById('отсчёт');
+            const блокПосле = document.getElementById('отсчёт-после');
             const поля = {
                 дни: document.getElementById('дни'),
                 часы: document.getElementById('часы'),
@@ -1373,7 +1712,8 @@
                 const разница = датаСвадьбы - сейчас;
 
                 if (разница < 0) {
-                    Object.values(поля).forEach(поле => поле.textContent = '—');
+                    блокОтсчёта.classList.add('скрыто');
+                    блокПосле.classList.remove('скрыто');
                     return;
                 }
 
@@ -1396,6 +1736,24 @@
         // 6. ФУНКЦИЯ: Загрузить программу дня
         // ============================================================
 
+        // Иконки для программы дня — подбираются по ключевым словам в названии,
+        // сердце используется как тёплый вариант по умолчанию
+        const ИКОНКИ_РАСПИСАНИЯ = [
+            { слова: ['сбор', 'встреч'], svg: '<path d="M6 16v-1a3 3 0 013-3h2a3 3 0 013 3v1" stroke-width="1.3"/><circle cx="8" cy="7" r="2.3" stroke-width="1.3"/><path d="M13 16v-1a3 3 0 00-1.8-2.75" stroke-width="1.3"/><circle cx="13.5" cy="7.3" r="1.8" stroke-width="1.3"/>' },
+            { слова: ['церемони', 'роспис'], svg: '<circle cx="7.5" cy="12" r="4" stroke-width="1.3"/><circle cx="12.5" cy="12" r="4" stroke-width="1.3"/>' },
+            { слова: ['фото'], svg: '<rect x="3" y="6.5" width="14" height="9.5" rx="1.6" stroke-width="1.3"/><path d="M7 6.5l1.1-1.8h3.8L13 6.5" stroke-width="1.3"/><circle cx="10" cy="11" r="2.6" stroke-width="1.3"/>' },
+            { слова: ['фуршет', 'банкет', 'ужин', 'обед'], svg: '<path d="M6.5 3.5h7l-.9 5.4a3.1 3.1 0 01-6.2 0l-.9-5.4z" stroke-width="1.3"/><path d="M10 11.5V17M7.3 17h5.4" stroke-width="1.3"/>' },
+            { слова: ['танц', 'дискотек', 'вечерин'], svg: '<circle cx="7.3" cy="14.5" r="2" stroke-width="1.3"/><path d="M9.3 14.5V5l6-1.2v8" stroke-width="1.3"/><circle cx="13.3" cy="12.5" r="2" stroke-width="1.3"/>' }
+        ];
+
+        const ИКОНКА_ПО_УМОЛЧАНИЮ = '<path d="M10 17s-6.2-4.2-7.9-7.7C.7 6 2.6 3 5.9 3c1.9 0 3.3 1.1 4.1 2.4C10.8 4.1 12.2 3 14.1 3c3.3 0 5.2 3 3.8 6.3C16.2 12.8 10 17 10 17z" stroke-width="1.3"/>';
+
+        function получитьИконкуСобытия(название) {
+            const текст = (название || '').toLowerCase();
+            const совпадение = ИКОНКИ_РАСПИСАНИЯ.find(пункт => пункт.слова.some(слово => текст.includes(слово)));
+            return совпадение ? совпадение.svg : ИКОНКА_ПО_УМОЛЧАНИЮ;
+        }
+
         function загрузитьПрограмму() {
             const расписание = document.getElementById('расписание');
             расписание.innerHTML = '';
@@ -1404,6 +1762,9 @@
                 const элемент = document.createElement('div');
                 элемент.className = 'расписание__пункт';
                 элемент.innerHTML = `
+                    <div class="расписание__значок">
+                        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor">${получитьИконкуСобытия(пункт.название)}</svg>
+                    </div>
                     <div class="расписание__время">${пункт.время}</div>
                     <div class="расписание__название">${пункт.название}</div>
                 `;
@@ -1421,6 +1782,7 @@
             контейнер.innerHTML = '';
 
             карта.innerHTML = '';
+            карта.classList.remove('загружена');
             if (КОНФИГ.картаURL) {
                 const iframe = document.createElement('iframe');
                 iframe.src = КОНФИГ.картаURL;
@@ -1428,11 +1790,47 @@
                 iframe.loading = 'lazy';
                 iframe.referrerPolicy = 'no-referrer-when-downgrade';
                 iframe.allowFullscreen = true;
+                iframe.addEventListener('load', () => карта.classList.add('загружена'));
                 карта.appendChild(iframe);
+                // На случай если событие load не сработает (некоторые браузеры/встраивания) —
+                // страховка, чтобы мерцание не крутилось вечно
+                setTimeout(() => карта.classList.add('загружена'), 2500);
             } else {
                 карта.innerHTML = '<p style="padding: 20px; text-align: center; color: var(--цвет-текст-мягкий); font-size: 14px;">Карта будет здесь (добавьте ссылку на Google Maps)</p>';
+                карта.classList.add('загружена');
             }
 
+            // Кнопки "Открыть в Google Maps" и "Скопировать адрес" под картой
+            const действия = document.getElementById('адрес-действия');
+            действия.innerHTML = '';
+
+            if (КОНФИГ.картаСсылка) {
+                const ссылка = document.createElement('a');
+                ссылка.className = 'адрес__кнопка';
+                ссылка.href = КОНФИГ.картаСсылка;
+                ссылка.target = '_blank';
+                ссылка.rel = 'noopener';
+                ссылка.innerHTML = '<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M10 18s6-5.5 6-10a6 6 0 10-12 0c0 4.5 6 10 6 10z"/><circle cx="10" cy="8" r="2.2"/></svg> Открыть в Google Maps';
+                действия.appendChild(ссылка);
+            }
+
+            if (КОНФИГ.адресМеста) {
+                const кнопкаКопии = document.createElement('button');
+                кнопкаКопии.type = 'button';
+                кнопкаКопии.className = 'адрес__кнопка';
+                кнопкаКопии.innerHTML = '<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.3"><rect x="6" y="6" width="10" height="12" rx="1.5"/><path d="M4 14V5a1.5 1.5 0 011.5-1.5H12"/></svg> Скопировать адрес';
+                кнопкаКопии.addEventListener('click', async function() {
+                    const исходныйТекст = кнопкаКопии.innerHTML;
+                    try {
+                        await navigator.clipboard.writeText(КОНФИГ.адресМеста);
+                        кнопкаКопии.textContent = 'Адрес скопирован!';
+                    } catch (ошибка) {
+                        кнопкаКопии.textContent = 'Не удалось скопировать';
+                    }
+                    setTimeout(() => { кнопкаКопии.innerHTML = исходныйТекст; }, 2000);
+                });
+                действия.appendChild(кнопкаКопии);
+            }
         }
 
         // ============================================================
@@ -1477,6 +1875,7 @@
         function инициализироватьФорму() {
             const форма = document.getElementById('форма-ответа');
             const кнопка = document.getElementById('кнопка-отправки');
+            const кнопкаТекст = кнопка.querySelector('.форма__кнопка-текст');
             const статус = document.getElementById('форма-статус');
             const статусТекст = document.getElementById('форма-статус-текст');
             const статусГалочка = document.getElementById('форма-статус-галочка');
@@ -1512,7 +1911,7 @@
                 }
 
                 кнопка.disabled = true;
-                кнопка.textContent = 'Отправка...';
+                кнопкаТекст.textContent = 'Отправка...';
                 показатьСтатус('', null);
 
                 const клиент = получитьSupabaseКлиент();
@@ -1539,13 +1938,21 @@
                 }
 
                 кнопка.disabled = false;
-                кнопка.textContent = 'Отправить ответ';
+                кнопкаТекст.textContent = 'Отправить ответ';
             });
 
             function показатьСтатус(текст, тип, сГалочкой) {
                 статусТекст.textContent = текст;
                 статус.className = 'форма__статус' + (тип ? ' ' + тип : '') + (текст ? ' видимый' : '');
                 статусГалочка.classList.toggle('скрыто', !сГалочкой);
+
+                if (тип === 'ошибка') {
+                    форма.classList.remove('встряска');
+                    // Форсируем перезапуск анимации, если ошибка показывается подряд несколько раз
+                    void форма.offsetWidth;
+                    форма.classList.add('встряска');
+                    setTimeout(() => форма.classList.remove('встряска'), 500);
+                }
             }
         }
 
